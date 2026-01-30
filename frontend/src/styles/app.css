@@ -1,0 +1,242 @@
+/* Custom styles for Property Price Intelligence Platform */
+
+:root {
+  --primary-color: #2563eb;
+  --success-color: #10b981;
+  --light-bg: #f9fafb;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+/* General */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--light-bg);
+  color: #111827;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #111827 !important;
+}
+
+.nav-link {
+  color: #374151 !important;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary-color) !important;
+}
+
+.nav-link.active {
+  color: var(--primary-color) !important;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 0.5rem !important;
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+}
+
+.card-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Form */
+.form-label {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.1);
+}
+
+/* Buttons */
+.btn {
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Pages */
+.page-container {
+  flex: 1;
+  background-color: var(--light-bg);
+  padding: 60px 24px;
+}
+
+.page-content {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.info-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.info-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-card h3 {
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.info-card ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: var(--text-muted);
+}
+
+.info-card li {
+  margin-bottom: 0.5rem;
+}
+
+/* Prediction Form */
+.prediction-form {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.prediction-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Result Card */
+.result-card {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  margin-top: 2rem;
+}
+
+.result-card h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.result-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+/* Error Message */
+.alert {
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-color);
+}
+
+.alert-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: #111827;
+}
+
+p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .prediction-form {
+    padding: 1.5rem;
+  }
+}
