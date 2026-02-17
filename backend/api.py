@@ -4,11 +4,13 @@ from pydantic import BaseModel
 import joblib
 import numpy as np
 import pandas as pd
-from typing import Optional
+import re
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
 
-# Allow React dev server
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -17,44 +19,46 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model + feature metadata
-model = joblib.load("baseline_rf_model.joblib")
-features = joblib.load("features_used.joblib")
-
-num_features = features["num_features"]
-cat_features = features["cat_features"]
-ALL_FEATURES = num_features + cat_features
-
+# Load the saved PIPELINE (preprocess + model)
+pipe = joblib.load(os.path.join(BASE_DIR, "house_price_model_xgb.joblib"))
 
 class PredictRequest(BaseModel):
-    TOTAL_FLOOR_AREA: Optional[float] = None
-    CURRENT_ENERGY_EFFICIENCY: Optional[float] = None
-    NUMBER_HABITABLE_ROOMS: Optional[float] = None
-    year: int
+    POSTCODE: str
 
-    property_type: Optional[str] = None
-    duration: Optional[str] = None
-    old_new: Optional[str] = None
-    PROPERTY_TYPE: Optional[str] = None
-    CURRENT_ENERGY_RATING: Optional[str] = None
-    BUILT_FORM: Optional[str] = None
+    PROPERTYTYPE: str
+    DURATION: str
+    CURRENT_ENERGY_EFFICIENCY: float
+    TOTAL_FLOOR_AREA: float
+    NUMBER_HABITABLE_ROOMS: float
+    CONSTRUCTION_AGE_BAND: str
+    BUILT_FORM: str
 
+def postcode_district(pc: str) -> str:
+    pc = (pc or "").upper().replace(" ", "").strip()
+    m = re.match(r"^([A-Z]{1,2}\d{1,2})", pc)
+    return m.group(1) if m else ""
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
-
 @app.post("/predict")
 def predict(req: PredictRequest):
     row = req.model_dump()
+    row["POSTCODE_DISTRICT"] = postcode_district(row["POSTCODE"])
 
-    # Build DataFrame with exact training columns
-    X = pd.DataFrame([row], columns=ALL_FEATURES)
+    X = pd.DataFrame([{
+        "PROPERTYTYPE": row["PROPERTYTYPE"],
+        "DURATION": row["DURATION"],
+        "CURRENT_ENERGY_EFFICIENCY": row["CURRENT_ENERGY_EFFICIENCY"],
+        "TOTAL_FLOOR_AREA": row["TOTAL_FLOOR_AREA"],
+        "NUMBER_HABITABLE_ROOMS": row["NUMBER_HABITABLE_ROOMS"],
+        "CONSTRUCTION_AGE_BAND": row["CONSTRUCTION_AGE_BAND"],
+        "BUILT_FORM": row["BUILT_FORM"],
+        "POSTCODE_DISTRICT": row["POSTCODE_DISTRICT"],
+    }])
 
-    y_log = float(model.predict(X)[0])
-    price = float(np.expm1(y_log))
+    y_log = float(pipe.predict(X)[0])
+    price = float(np.exp(y_log))  # because training used np.log(price)
 
-    return {
-        "predicted_price": round(price, 0)
-    }
+    return {"predicted_price": round(price, 0)}

@@ -5,18 +5,14 @@ import { useState } from "react";
  * It mirrors the features used during training.
  */
 type PredictRequest = {
-  TOTAL_FLOOR_AREA: number | null;
+  POSTCODE: string;
+  PROPERTYTYPE: string;
+  DURATION: string;
   CURRENT_ENERGY_EFFICIENCY: number | null;
+  TOTAL_FLOOR_AREA: number | null;
   NUMBER_HABITABLE_ROOMS: number | null;
-  year: number;
-
-  property_type: "D" | "S" | "T" | "F" | "O";
-  duration: "F" | "L";
-  old_new: "N" | "Y";
-
-  PROPERTY_TYPE?: string | null;
-  CURRENT_ENERGY_RATING?: "A" | "B" | "C" | "D" | "E" | "F" | "G" | null;
-  BUILT_FORM?: string | null;
+  CONSTRUCTION_AGE_BAND: string;
+  BUILT_FORM: string;
 };
 
 type PredictResponse = {
@@ -27,18 +23,14 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
 
 export default function App() {
   const [form, setForm] = useState<PredictRequest>({
-    TOTAL_FLOOR_AREA: null,
+    POSTCODE: "",
+    PROPERTYTYPE: "T",
+    DURATION: "F",
     CURRENT_ENERGY_EFFICIENCY: null,
+    TOTAL_FLOOR_AREA: null,
     NUMBER_HABITABLE_ROOMS: null,
-    year: new Date().getFullYear(),
-
-    property_type: "T",
-    duration: "F",
-    old_new: "N",
-
-    PROPERTY_TYPE: null,
-    CURRENT_ENERGY_RATING: "C",
-    BUILT_FORM: null,
+    CONSTRUCTION_AGE_BAND: "England and Wales: 1967-1975",
+    BUILT_FORM: "Semi-Detached",
   });
 
   const [loading, setLoading] = useState(false);
@@ -91,6 +83,24 @@ export default function App() {
                   <div className="row">
                     <div className="col-md-6">
                       <div className="mb-3">
+                        <label htmlFor="postcode" className="form-label">
+                          Postcode
+                        </label>
+                        <input
+                          id="postcode"
+                          type="text"
+                          className="form-control"
+                          placeholder="e.g. B15 2TT"
+                          value={form.POSTCODE}
+                          onChange={(e) =>
+                            update("POSTCODE", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="col-md-6">
+                      <div className="mb-3">
                         <label htmlFor="floorArea" className="form-label">
                           Floor Area (m²)
                         </label>
@@ -108,7 +118,9 @@ export default function App() {
                         />
                       </div>
                     </div>
+                  </div>
 
+                  <div className="row">
                     <div className="col-md-6">
                       <div className="mb-3">
                         <label htmlFor="energyEff" className="form-label">
@@ -128,9 +140,7 @@ export default function App() {
                         />
                       </div>
                     </div>
-                  </div>
 
-                  <div className="row">
                     <div className="col-md-6">
                       <div className="mb-3">
                         <label htmlFor="rooms" className="form-label">
@@ -150,7 +160,9 @@ export default function App() {
                         />
                       </div>
                     </div>
+                  </div>
 
+                  <div className="row">
                     <div className="col-md-6">
                       <div className="mb-3">
                         <label htmlFor="propType" className="form-label">
@@ -159,22 +171,20 @@ export default function App() {
                         <select
                           id="propType"
                           className="form-select"
-                          value={form.property_type}
+                          value={form.PROPERTYTYPE}
                           onChange={(e) =>
-                            update("property_type", e.target.value as any)
+                            update("PROPERTYTYPE", e.target.value)
                           }
                         >
                           <option value="D">Detached</option>
-                          <option value="S">Semi-detached</option>
+                          <option value="S">Semi-Detached</option>
                           <option value="T">Terraced</option>
                           <option value="F">Flat</option>
                           <option value="O">Other</option>
                         </select>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="row">
                     <div className="col-md-6">
                       <div className="mb-3">
                         <label htmlFor="tenure" className="form-label">
@@ -183,32 +193,13 @@ export default function App() {
                         <select
                           id="tenure"
                           className="form-select"
-                          value={form.duration}
+                          value={form.DURATION}
                           onChange={(e) =>
-                            update("duration", e.target.value as any)
+                            update("DURATION", e.target.value)
                           }
                         >
                           <option value="F">Freehold</option>
                           <option value="L">Leasehold</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="mb-3">
-                        <label htmlFor="newBuild" className="form-label">
-                          New Build?
-                        </label>
-                        <select
-                          id="newBuild"
-                          className="form-select"
-                          value={form.old_new}
-                          onChange={(e) =>
-                            update("old_new", e.target.value as any)
-                          }
-                        >
-                          <option value="N">No</option>
-                          <option value="Y">Yes</option>
                         </select>
                       </div>
                     </div>
@@ -217,22 +208,52 @@ export default function App() {
                   <div className="row">
                     <div className="col-md-6">
                       <div className="mb-3">
-                        <label htmlFor="epcRating" className="form-label">
-                          EPC Rating
+                        <label htmlFor="constructionAge" className="form-label">
+                          Construction Age Band
                         </label>
                         <select
-                          id="epcRating"
+                          id="constructionAge"
                           className="form-select"
-                          value={form.CURRENT_ENERGY_RATING ?? ""}
+                          value={form.CONSTRUCTION_AGE_BAND}
                           onChange={(e) =>
-                            update("CURRENT_ENERGY_RATING", e.target.value as any)
+                            update("CONSTRUCTION_AGE_BAND", e.target.value)
                           }
                         >
-                          {["A", "B", "C", "D", "E", "F", "G"].map((r) => (
-                            <option key={r} value={r}>
-                              {r}
-                            </option>
-                          ))}
+                          <option value="England and Wales: before 1900">Before 1900</option>
+                          <option value="England and Wales: 1900-1929">1900–1929</option>
+                          <option value="England and Wales: 1930-1949">1930–1949</option>
+                          <option value="England and Wales: 1950-1966">1950–1966</option>
+                          <option value="England and Wales: 1967-1975">1967–1975</option>
+                          <option value="England and Wales: 1976-1982">1976–1982</option>
+                          <option value="England and Wales: 1983-1990">1983–1990</option>
+                          <option value="England and Wales: 1991-1995">1991–1995</option>
+                          <option value="England and Wales: 1996-2002">1996–2002</option>
+                          <option value="England and Wales: 2003-2006">2003–2006</option>
+                          <option value="England and Wales: 2007-2011">2007–2011</option>
+                          <option value="England and Wales: 2012 onwards">2012 onwards</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="col-md-6">
+                      <div className="mb-3">
+                        <label htmlFor="builtForm" className="form-label">
+                          Built Form
+                        </label>
+                        <select
+                          id="builtForm"
+                          className="form-select"
+                          value={form.BUILT_FORM}
+                          onChange={(e) =>
+                            update("BUILT_FORM", e.target.value)
+                          }
+                        >
+                          <option value="Detached">Detached</option>
+                          <option value="Semi-Detached">Semi-Detached</option>
+                          <option value="Mid-Terrace">Mid-Terrace</option>
+                          <option value="End-Terrace">End-Terrace</option>
+                          <option value="Enclosed Mid-Terrace">Enclosed Mid-Terrace</option>
+                          <option value="Enclosed End-Terrace">Enclosed End-Terrace</option>
                         </select>
                       </div>
                     </div>
