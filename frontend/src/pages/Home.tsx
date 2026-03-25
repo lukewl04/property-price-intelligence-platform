@@ -4,25 +4,46 @@ export default function Home() {
   return (
     <div className="page-container">
       <div className="page-content text-center">
-        <h1 className="hero-title">Property Price Intelligence Platform</h1>
+        <h1 className="hero-title">
+          Property Price Intelligence Platform
+        </h1>
 
         <p className="hero-subtitle">
-          A machine learning system for predicting residential property prices
-          in Birmingham using Land Registry and EPC data.
+          An honours project investigating the use of machine learning to
+          predict residential property prices across England and Wales,
+          using HM Land Registry Price Paid Data and Energy Performance
+          Certificate (EPC) records.
         </p>
 
-        <div className="info-card">
-          <h3>What does this project do?</h3>
-          <ul>
-            <li>Trains ML models on historical property sales</li>
-            <li>Integrates energy efficiency and property attributes</li>
-            <li>Provides real-time price predictions via a web interface</li>
-          </ul>
+        <div className="feature-grid">
+          <div className="feature-card">
+            <h3>Data-Driven Modelling</h3>
+            <p>
+              Combines transaction records with energy performance data
+              to build a predictive model grounded in real-world evidence.
+            </p>
+          </div>
+          <div className="feature-card">
+            <h3>Feature Engineering</h3>
+            <p>
+              Derives spatial, temporal, and property-level features
+              including postcode-based target encoding, distance metrics,
+              and interaction terms.
+            </p>
+          </div>
+          <div className="feature-card">
+            <h3>Deployed Prediction</h3>
+            <p>
+              A trained CatBoost model is served via a FastAPI backend,
+              accepting property attributes and returning an estimated price.
+            </p>
+          </div>
         </div>
 
-        <Link to="/predict" className="d-inline-block">
-          <button className="btn btn-primary btn-lg">
-            Start Prediction
+        <Link to="/predict" className="cta-link">
+          <button className="btn-cta">
+            Try the Predictor
+            <span className="cta-arrow">&rarr;</span>
           </button>
         </Link>
       </div>
