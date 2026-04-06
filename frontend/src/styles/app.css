@@ -757,6 +757,44 @@ code {
   transition: background-color var(--transition), color var(--transition);
 }
 
+/* --- About Page Table --- */
+.about-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.about-table th,
+.about-table td {
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  transition: background-color var(--transition), color var(--transition),
+    border-color var(--transition);
+}
+
+.about-table th {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.about-table td {
+  color: var(--text-secondary);
+}
+
+.about-table tbody tr:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.about-table td:last-child,
+.about-table th:last-child {
+  text-align: right;
+}
+
 /* --- Spinner (bootstrap compat) --- */
 .spinner-border-sm {
   display: inline-block;

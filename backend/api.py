@@ -8,6 +8,8 @@ import re
 import os
 import math
 from datetime import date
+import xgboost as xgb
+import scipy.sparse as sp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,23 +23,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Load CatBoost deploy bundle ─────────────────────────────────────────
-bundle = joblib.load(os.path.join(BASE_DIR, "catboost_deploy.joblib"))
+# ── Load XGBoost deploy bundle ──────────────────────────────────────────
+bundle = joblib.load(os.path.join(BASE_DIR, "xgboost_deploy.joblib"))
 model = bundle["model"]
 feature_columns = bundle["feature_columns"]
-categorical_columns = bundle["categorical_columns"]
-postcode_coords = bundle["postcode_coords"]          # DataFrame indexed by _PC_NORM
-district_coords = bundle["district_coords"]          # DataFrame indexed by POSTCODE_DISTRICT
-kmeans_model = bundle["kmeans"]                       # KMeans or None
-sector_te_map = bundle["sector_te_map"]               # dict
-district_te_map = bundle["district_te_map"]           # dict
-district_density_map = bundle["district_density_map"] # dict
-district_median_map = bundle["district_median_map"]   # dict
-train_global_mean = bundle["train_global_mean"]       # float
-epc_band_map = bundle["epc_band_map"]                 # dict  A→92 …
-band_midpoints = bundle["band_midpoints"]             # dict  age-band → midpoint year
-cities = bundle["cities"]                             # dict  name → (lat, lon)
-cutoff_year = bundle["cutoff_year"]                   # int
+num_imputer = bundle["num_imputer"]
+ohe = bundle["ohe"]
+num_cols = bundle["num_cols"]
+cat_cols = bundle["cat_cols"]
+postcode_coords = bundle["postcode_coords"]
+district_coords = bundle["district_coords"]
+kmeans_model = bundle["kmeans"]
+sector_te_map = bundle["sector_te_map"]
+district_te_map = bundle["district_te_map"]
+district_density_map = bundle["district_density_map"]
+district_median_map = bundle["district_median_map"]
+train_global_mean = bundle["train_global_mean"]
+epc_band_map = bundle["epc_band_map"]
+band_midpoints = bundle["band_midpoints"]
+cities = bundle["cities"]
+cutoff_year = bundle["cutoff_year"]
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────
@@ -226,23 +231,29 @@ def predict(req: PredictRequest):
         "DISTRICT_MEDIAN_LOG_PRICE": district_median_log,
     }
 
-    # Build single-row DF in exact feature_columns order
+    all_cols = list(dict.fromkeys(feature_columns + num_cols + cat_cols))
     data = {}
-    for col in feature_columns:
+    for col in all_cols:
         if col in row:
             data[col] = row[col]
         else:
-            data[col] = "unknown" if col in categorical_columns else 0
+            data[col] = "unknown" if col in cat_cols else 0
 
     X = pd.DataFrame([data])
 
-    # Cast categoricals to str; fill any NaN with "unknown"
-    for col in categorical_columns:
+    for col in cat_cols:
         if col in X.columns:
-            X[col] = X[col].astype(str).fillna("unknown")
+            if X[col].dtype in [np.float64, np.float32]:
+                X[col] = X[col].astype("Int64").astype(str).replace("<NA>", "unknown")
+            else:
+                X[col] = X[col].astype(str).fillna("unknown")
 
-    # ── 11. Predict & convert back to price ──────────────────────────────
-    y_log = float(model.predict(X)[0])
+    X_num = num_imputer.transform(X[num_cols])
+    X_cat = ohe.transform(X[cat_cols])
+    X_final = sp.hstack([sp.csr_matrix(X_num), X_cat])
+    dmatrix = xgb.DMatrix(X_final)
+
+    y_log = float(model.predict(dmatrix)[0])
     price = float(np.expm1(y_log))
 
     return {"predicted_price": round(price, 0)}

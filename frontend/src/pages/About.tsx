@@ -18,7 +18,7 @@ export default function About() {
         <div className="info-card">
           <h3>Datasets</h3>
           <p>
-            The model was trained on two primary open-data sources:
+            The model was trained on three primary open-data sources:
           </p>
           <ul>
             <li>
@@ -32,11 +32,16 @@ export default function About() {
               habitable rooms, construction age band, built form, and current
               energy efficiency rating.
             </li>
+            <li>
+              <strong>ONS Postcode Directory</strong> &mdash;
+              geographic reference data mapping postcodes to latitude, longitude,
+              and administrative boundaries, used for spatial feature engineering.
+            </li>
           </ul>
           <p>
             These datasets were merged on postcode and address fields to produce
             a unified training set linking transaction prices with physical
-            property characteristics.
+            property characteristics and geographic context.
           </p>
         </div>
 
@@ -55,10 +60,10 @@ export default function About() {
         <div className="info-card">
           <h3>Deployed Model</h3>
           <p>
-            The production model is a <strong>CatBoost</strong> gradient-boosted
+            The production model is an <strong>XGBoost</strong> gradient-boosted
             decision tree regressor, trained on log-transformed sale prices
-            and converted back to pounds at inference time. CatBoost was
-            selected for its native handling of categorical features and strong
+            and converted back to pounds at inference time. XGBoost was
+            selected for its speed, regularisation capabilities, and strong
             performance on tabular data.
           </p>
         </div>
@@ -67,7 +72,7 @@ export default function About() {
           <h3>Technology Stack</h3>
           <ul>
             <li>
-              <strong>Backend:</strong> Python, FastAPI, CatBoost, scikit-learn,
+              <strong>Backend:</strong> Python, FastAPI, XGBoost, scikit-learn,
               pandas, joblib
             </li>
             <li>

@@ -5,7 +5,7 @@ export default function Results() {
         <h1 className="section-title">Evaluation &amp; Results</h1>
 
         <p className="section-intro">
-          This page summarises the performance of the deployed CatBoost model
+          This page summarises the performance of the deployed XGBoost model
           and discusses the strengths and limitations of the approach.
         </p>
 
@@ -13,26 +13,52 @@ export default function Results() {
         <div className="info-card">
           <h3>Model Performance</h3>
           <p>
-            The model was evaluated on a held-out test set that was not used
-            during training. The following metrics summarise prediction accuracy:
+            Evaluated on a held-out test set spanning 574,327 transactions.
           </p>
+
+          <h4 style={{ marginTop: "1rem", marginBottom: "0.5rem", fontSize: "0.95rem" }}>
+            Price-Scale Metrics
+          </h4>
           <div className="metrics-grid">
             <div className="metric-item">
-              <span className="metric-value">&mdash;</span>
-              <span className="metric-label">MAE (&pound;)</span>
+              <span className="metric-value">0.78</span>
+              <span className="metric-label">R²</span>
             </div>
             <div className="metric-item">
-              <span className="metric-value">&mdash;</span>
-              <span className="metric-label">RMSE (&pound;)</span>
+              <span className="metric-value">£61,915</span>
+              <span className="metric-label">MAE</span>
             </div>
             <div className="metric-item">
-              <span className="metric-value">&mdash;</span>
-              <span className="metric-label">R&sup2;</span>
+              <span className="metric-value">£103,991</span>
+              <span className="metric-label">RMSE</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-value">20.26%</span>
+              <span className="metric-label">MAPE</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-value">13.66%</span>
+              <span className="metric-label">Median APE</span>
             </div>
           </div>
-          <p className="placeholder-note">
-            Replace the dashes above with your actual test-set metrics.
-          </p>
+
+          <h4 style={{ marginTop: "1.25rem", marginBottom: "0.5rem", fontSize: "0.95rem" }}>
+            Log-Scale Metrics
+          </h4>
+          <div className="metrics-grid">
+            <div className="metric-item">
+              <span className="metric-value">0.82</span>
+              <span className="metric-label">R²</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-value">0.1886</span>
+              <span className="metric-label">MAE</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-value">0.2640</span>
+              <span className="metric-label">RMSE</span>
+            </div>
+          </div>
         </div>
 
         {/* ── Evaluation Method ────────────────────────────────── */}
@@ -83,8 +109,8 @@ export default function Results() {
               predictive signal beyond raw inputs.
             </li>
             <li>
-              CatBoost handles categorical features natively and generalises
-              well on tabular data with relatively little tuning.
+              XGBoost provides strong gradient-boosting performance with
+              built-in regularisation that generalises well on tabular data.
             </li>
             <li>
               The full pipeline from raw data to live prediction is
