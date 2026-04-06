@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../config";
 
 /**
  * This type MUST match what FastAPI expects.
@@ -19,8 +20,6 @@ type PredictRequest = {
 type PredictResponse = {
   predicted_price: number;
 };
-
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
 
 const INITIAL_FORM: PredictRequest = {
   POSTCODE: "",
