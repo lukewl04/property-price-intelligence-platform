@@ -24,7 +24,9 @@ app.add_middleware(
 )
 
 # ── Load XGBoost deploy bundle ──────────────────────────────────────────
+print("Starting api.py...")
 bundle = joblib.load(os.path.join(BASE_DIR, "xgboost_deploy.joblib"))
+print("Model bundle loaded.")
 model = bundle["model"]
 feature_columns = bundle["feature_columns"]
 num_imputer = bundle["num_imputer"]
