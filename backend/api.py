@@ -26,7 +26,7 @@ allowed_origins = _default_origins + [o.strip() for o in _extra.split(",") if o.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"https://property-price-intelligence-platform.*\.vercel\.app",
+    allow_origin_regex=r"https://property-price-intelligence-platfor.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
