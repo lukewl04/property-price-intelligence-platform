@@ -45,15 +45,6 @@ export default function Navbar() {
           >
             Results
           </NavLink>
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              `nav-link ${isActive ? "active" : ""}`
-            }
-          >
-            About
-          </NavLink>
-
           <button
             className="theme-toggle"
             onClick={toggleTheme}

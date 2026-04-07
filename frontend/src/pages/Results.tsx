@@ -89,10 +89,11 @@ export default function Results() {
         {/* ── Chart Placeholder ────────────────────────────────── */}
         <div className="info-card">
           <h3>Predicted vs. Actual Prices</h3>
-          <div className="chart-placeholder">
-            <p>Chart placeholder &mdash; insert a scatter plot or residual
-            chart here once evaluation visuals are generated.</p>
-          </div>
+          <img
+            src="/actual_vs_predicted.png"
+            alt="Scatter plot of predicted vs actual property prices"
+            style={{ width: "100%", borderRadius: "8px", marginTop: "0.5rem" }}
+          />
         </div>
 
         {/* ── Strengths ────────────────────────────────────────── */}

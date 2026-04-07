@@ -4,20 +4,26 @@ export default function HowItWorks() {
       <div className="page-content">
         <h1 className="section-title">How It Works</h1>
 
-        <p className="section-intro">
-          This page outlines the key stages of the system, from raw data
-          through to the price estimate displayed in the browser.
-        </p>
+        <div className="info-card">
+          <h3>Project Purpose</h3>
+          <p>
+            This web application was developed as the practical artefact for an
+            undergraduate Honours project in Software Development. The aim is to
+            investigate the feasibility of predicting residential property prices
+            in England and Wales using publicly available datasets and modern
+            machine learning techniques.
+          </p>
+        </div>
 
         <div className="info-card">
           <h3>1. Data Sources</h3>
           <p>
-            Two open datasets published by UK government bodies form the basis
+            Three open datasets published by UK government bodies form the basis
             of the model:
           </p>
           <ul>
             <li>
-              <strong>Price Paid Data</strong> (HM Land Registry) &mdash; every
+              <strong>HM Land Registry Price Paid Data</strong> &mdash; every
               residential property transaction in England and Wales, including
               sale price, date, postcode, property type, and tenure.
             </li>
@@ -26,16 +32,27 @@ export default function HowItWorks() {
               property-level records containing floor area, habitable rooms,
               EPC rating, construction age band, and built form.
             </li>
+            <li>
+              <strong>ONS Postcode Directory</strong> &mdash; geographic
+              reference data mapping postcodes to latitude, longitude, and
+              administrative boundaries, used for spatial feature engineering.
+            </li>
           </ul>
+          <p>
+            These datasets were merged on postcode and address fields to produce
+            a unified training set linking transaction prices with physical
+            property characteristics and geographic context.
+          </p>
         </div>
 
         <div className="info-card">
           <h3>2. Data Preparation &amp; Merging</h3>
           <p>
-            The two datasets are cleaned independently (removing duplicates,
+            The datasets are cleaned independently (removing duplicates,
             handling missing values, and normalising postcodes) and then merged
             on postcode and address to create a single record per transaction
-            that combines price information with physical property attributes.
+            that combines price information with physical property attributes
+            and geographic context.
           </p>
         </div>
 
@@ -61,10 +78,10 @@ export default function HowItWorks() {
         <div className="info-card">
           <h3>4. Model Training</h3>
           <p>
-            A <strong>CatBoost</strong> gradient-boosted decision tree regressor
-            is trained on the log-transformed sale price. CatBoost handles
-            categorical features natively and offers robust performance on
-            tabular data with minimal hyperparameter tuning.
+            An <strong>XGBoost</strong> gradient-boosted decision tree regressor
+            is trained on the log-transformed sale price. XGBoost was selected
+            for its speed, regularisation capabilities, and strong performance
+            on tabular data.
           </p>
         </div>
 
@@ -82,9 +99,26 @@ export default function HowItWorks() {
             to the API. The backend normalises the postcode, looks up
             coordinates, computes all derived features, constructs a
             single-row DataFrame in training column order, and passes it to
-            the CatBoost model. The log-price prediction is converted back
+            the XGBoost model. The log-price prediction is converted back
             to pounds with <code>expm1</code> and returned to the browser.
           </p>
+        </div>
+
+        <div className="info-card">
+          <h3>Technology Stack</h3>
+          <ul>
+            <li>
+              <strong>Backend:</strong> Python, FastAPI, XGBoost, scikit-learn,
+              pandas, joblib
+            </li>
+            <li>
+              <strong>Frontend:</strong> React, TypeScript, Vite
+            </li>
+            <li>
+              <strong>Deployment:</strong> Uvicorn (ASGI), single-page
+              application served separately from the API
+            </li>
+          </ul>
         </div>
       </div>
     </div>

@@ -110,7 +110,7 @@ export default function Predictor() {
         <h1 className="section-title">Price Prediction</h1>
         <p className="section-intro">
           Enter property details below to generate an estimated price using
-          the deployed CatBoost model. All fields are used as model inputs.
+          the deployed XGBoost model. All fields are used as model inputs.
         </p>
 
         <div className="prediction-form">
