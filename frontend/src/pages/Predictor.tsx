@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { API_URL } from "../config";
 
-/**
- * This type MUST match what FastAPI expects.
- * It mirrors the features used during training.
- */
+
 type PredictRequest = {
   POSTCODE: string;
   PROPERTYTYPE: string;

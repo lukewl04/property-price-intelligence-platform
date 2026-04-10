@@ -106,7 +106,7 @@ def health():
 
 @app.post("/predict")
 def predict(req: PredictRequest):
-    # ── 1. EPC letter → numeric CURRENT_ENERGY_EFFICIENCY ────────────────
+    #  EPC letter → numeric CURRENT_ENERGY_EFFICIENCY ────────────────
     epc_letter = req.EPC_RATING.strip().upper()
     if epc_letter not in epc_band_map:
         raise HTTPException(
@@ -115,14 +115,14 @@ def predict(req: PredictRequest):
         )
     epc_num = epc_band_map[epc_letter]
 
-    # ── 2. Postcode normalisation & derived strings ──────────────────────
+    #  Postcode normalisation & derived strings ──────────────────────
     pc_norm = _normalise_postcode(req.POSTCODE)
     if not pc_norm:
         raise HTTPException(status_code=400, detail="Postcode is required.")
     district = _postcode_district(pc_norm)
     sector = _postcode_sector(pc_norm)
 
-    # ── 3. Floor-area & rooms interaction features ───────────────────────
+    # Floor-area & rooms interaction features ───────────────────────
     area = req.TOTAL_FLOOR_AREA
     rooms = req.NUMBER_HABITABLE_ROOMS
     log_area = float(np.log1p(area))
@@ -136,7 +136,7 @@ def predict(req: PredictRequest):
     rooms_x_area = rooms_safe * area
     epc_per_room = epc_num / rooms_safe if rooms_safe > 0 else 0.0
 
-    # ── 4. Lat / Lon lookup ──────────────────────────────────────────────
+    # Lat / Lon lookup ──────────────────────────────────────────────
     lat, lon = None, None
     if pc_norm in postcode_coords.index:
         lat = float(postcode_coords.loc[pc_norm, "LATITUDE"])
@@ -151,7 +151,7 @@ def predict(req: PredictRequest):
             detail=f"Unable to geo-locate postcode '{req.POSTCODE}'. Check spelling.",
         )
 
-    # ── 5. City distance features ────────────────────────────────────────
+    # City distance features ────────────────────────────────────────
     city_dists: dict[str, float] = {}
     city_log_dists: dict[str, float] = {}
     for city_name, (clat, clon) in cities.items():
@@ -159,7 +159,7 @@ def predict(req: PredictRequest):
         city_dists[f"DIST_{city_name}_KM"] = d
         city_log_dists[f"LOG_DIST_{city_name}"] = float(np.log1p(d))
 
-    # ── 6. Location cluster ──────────────────────────────────────────────
+    # Location cluster ──────────────────────────────────────────────
     location_cluster = "unknown"
     if kmeans_model is not None:
         try:
@@ -169,7 +169,7 @@ def predict(req: PredictRequest):
         except Exception:
             pass
 
-    # ── 7. Target-encoded / aggregated postcode features ─────────────────
+    #  Target-encoded / aggregated postcode features ─────────────────
     pc_sector_mean_log = sector_te_map.get(sector, train_global_mean)
     pc_district_mean_log = district_te_map.get(district, train_global_mean)
     # Training stored raw counts; feature is log1p(count)
@@ -177,7 +177,7 @@ def predict(req: PredictRequest):
     district_log_density = float(np.log1p(raw_density))
     district_median_log = district_median_map.get(district, train_global_mean)
 
-    # ── 8. Current-date temporal features ────────────────────────────────
+    #  Current-date temporal features ────────────────────────────────
     today = date.today()
     sale_year = today.year
     sale_quarter = (today.month - 1) // 3 + 1
@@ -191,16 +191,16 @@ def predict(req: PredictRequest):
     log_area_x_year = log_area * year_scaled
     epc_x_year = epc_num * year_scaled
 
-    # ── 9. Construction-age-band compatibility ───────────────────────────
+    #  Construction-age-band compatibility ───────────────────────────
     # Frontend sends "2012 onwards"; training split into "2012-2022" / "2023 onwards"
     _AGE_BAND_COMPAT: dict[str, str] = {
         "England and Wales: 2012 onwards": "England and Wales: 2012-2022",
     }
     age_band = _AGE_BAND_COMPAT.get(req.CONSTRUCTION_AGE_BAND, req.CONSTRUCTION_AGE_BAND)
-    # Note: PROPERTY_AGE, PROPERTY_AGE_SQ, AGE_x_YEAR are NOT in feature_columns
-    # so no property-age derivation is needed.
 
-    # ── 10. Assemble feature row ─────────────────────────────────────────
+
+
+    #  Assemble feature row ─────────────────────────────────────────
     row: dict = {
         # categorical / raw inputs
         "PROPERTYTYPE": req.PROPERTYTYPE,
